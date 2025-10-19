@@ -8,3 +8,5 @@ make/
 build/
 .cache/
 GAME/
+.zig-cache/
+zig-out/

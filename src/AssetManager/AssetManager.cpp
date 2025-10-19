@@ -7,6 +7,10 @@
 #include "SDL_surface.h"
 #include "SDL_ttf.h"
 
+#ifndef ASSETS_PATH
+#define ASSETS_PATH "./assets/"
+#endif
+
 AssetManager::AssetManager() {
 	Logger::Confirm("Asset Manager consturcted.");
 }
