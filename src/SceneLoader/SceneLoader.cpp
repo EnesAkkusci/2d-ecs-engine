@@ -162,7 +162,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			player.AddComponent<RigidBodyComponent>(
 				glm::vec2(0,0)
 			);
-			player.AddComponent<PlayerControlComponent>(500.0);
+			player.AddComponent<PlayerControlComponent>(400.0);
 			player.AddComponent<ColliderComponent>(
 				Box,
 				glm::vec2(0,0),
@@ -396,7 +396,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				(50)
 			));
 			timer.AddComponent<TextComponent>("00:00", "pico-40", white, TopLeft);
-			timer.AddComponent<TimerComponent>(80);
+			timer.AddComponent<TimerComponent>(75);
 
 			//---//Scientist1//---//
 			Entity sci1 = Registry->CreateEntity();

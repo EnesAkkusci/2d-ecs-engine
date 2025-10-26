@@ -4,6 +4,7 @@
 #include "../EventSystem/Events/AnimationDoneEvent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/SpriteComponent.h"
+#include <cassert>
 
 class AnimationSystem : public System {
 public:
@@ -43,10 +44,7 @@ inline void ChangeAnimation(Entity& entity, std::string_view name) {
 	auto& sprite = entity.GetComponent<SpriteComponent>();
 
 	auto it = animComp.animations.find(name);
-	Logger::Assert(
-		it != animComp.animations.end(),
-		"Trying to change to animation that does not exist."
-	);
+	assert(it != animComp.animations.end());
 
 	const auto& nextAnimation = it->second;
 	if(animComp.currentAnimation.sheetIndex == nextAnimation.sheetIndex) return; //same animation clip

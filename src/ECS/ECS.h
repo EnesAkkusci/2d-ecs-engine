@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <typeindex>
+#include <string>
 #include "../Utils.hpp"
 #include "../Logger/Logger.h"
 #include "../Utils.hpp"

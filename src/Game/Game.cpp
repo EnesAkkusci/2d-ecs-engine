@@ -52,7 +52,7 @@ Game::~Game() {
 
 void Game::Initalize() {
 	//Resolution awareness
-	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+	// SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
@@ -229,7 +229,7 @@ void Game::ProcessInput() {
 				isGameRunning = false;
 				// registry.ClearEntities();
 			}
-			// if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
+			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
 			inputManager.KeyPressed(sdlEvent.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:

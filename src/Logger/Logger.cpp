@@ -13,10 +13,3 @@ void Logger::Err(const std::string_view& message) {
 void Logger::Log(const std::string_view& message) {
     std::cout << "\033[0m" << message << "\033[0m" << std::endl;
 }
-
-void Logger::Assert(bool condition, const std::string_view& message) {
-	if(!condition) {
-		Logger::Err(message);
-		assert(condition);
-	}
-}

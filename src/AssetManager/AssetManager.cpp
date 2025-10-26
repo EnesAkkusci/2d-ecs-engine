@@ -1,4 +1,5 @@
 #include <SDL_image.h>
+#include <cassert>
 #include <cstddef>
 #include "./AssetManager.h"
 #include "../Logger/Logger.h"
@@ -48,10 +49,7 @@ void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string_view& as
 
 SDL_Texture* AssetManager::GetTexture(const std::string& assetName) { 
 	auto it = textures.find(assetName);
-
-	#ifdef DEBUG
-	Logger::Assert((it != textures.end()), "Non existent asset name: " + assetName);
-	#endif
+	assert(it != textures.end());
 
 	return it->second;
 }
@@ -65,7 +63,7 @@ void AssetManager::AddFont(const std::string_view& fontName, const std::string& 
 
 TTF_Font* AssetManager::GetFont(const std::string& fontName) { 
 	auto it = fonts.find(fontName);
-	Logger::Assert((it != fonts.end()), "Non existent font name: " + fontName);
+	assert(it != fonts.end());
 	return it->second;
 }
 
@@ -78,6 +76,6 @@ void  AssetManager::AddSFX(const std::string_view& sfxName, const std::string& f
 
 Mix_Chunk* AssetManager::GetSFX(const std::string& sfxName) {
 	auto it = soundEffects.find(sfxName);
-	Logger::Assert((it != soundEffects.end()), "Non existent font name: " + sfxName);
+	assert(it != soundEffects.end());
 	return it->second;
 }

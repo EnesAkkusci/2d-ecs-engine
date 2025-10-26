@@ -1,8 +1,6 @@
 #pragma once
 #include <SDL.h>
 
-// #define DEBUG
-
 enum Tag {
 	Player,
 	Enemy,
@@ -28,7 +26,7 @@ const unsigned int MAX_COMPONENTS = 32;
 const unsigned int MAX_TAGS = 32;
 const unsigned int MAX_MOUSE_BUTTONS = 8;
 
-const int MAX_FPS = 200;
+const int MAX_FPS = 20000;
 const int MIN_MS_PER_FRAME = 1000 / MAX_FPS;
 
 const int SCALE_FACTOR_32 = 2;
