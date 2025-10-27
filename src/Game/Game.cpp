@@ -229,7 +229,7 @@ void Game::ProcessInput() {
 				isGameRunning = false;
 				// registry.ClearEntities();
 			}
-			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
+			// if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
 			inputManager.KeyPressed(sdlEvent.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:
