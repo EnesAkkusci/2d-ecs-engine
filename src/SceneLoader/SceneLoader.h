@@ -4,7 +4,6 @@ enum Scenes{
 	StartMenu,
 	Gameplay,
 	DeathScreen,
-	WinScene
 };
 
 class SceneLoader {

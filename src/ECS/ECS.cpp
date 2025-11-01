@@ -4,7 +4,6 @@
 #include "ECS.h"
 #include "../Systems/RenderSystem.hpp"
 #include "../Systems/CollisionSystem.hpp"
-#include "../Components/ParentComponent.h"
 
 Registry* Registry::registry = nullptr;
 
@@ -16,12 +15,6 @@ int IComponent::nextID = 0;
 ////////////////////////////////////////////
 
 void Entity::Kill() {
-	if (this->HasComponent<ParentComponent>()) {
-		auto& parentComponent = this->GetComponent<ParentComponent>();
-		for (int i = 0; i < parentComponent.childCount; i++) {
-			parentComponent.children[i].entity.Kill();
-		}
-	}
 	Registry::registry->KillEntity(*this);
 }
 

@@ -23,20 +23,6 @@
 #include "../Systems/UIDebugSystem.hpp"
 #include "../Systems/LifetimeSystem.hpp"
 #include "../Systems/SoundEffectSystem.hpp"
-#include "../Systems/PlayerControlSystem.hpp"
-#include "../Systems/ObstacleCollisionSystem.hpp"
-#include "../Systems/PlayerAnimationSystem.hpp"
-#include "../Systems/ParentSystem.hpp"
-#include "../Systems/PlayerInteractionSystem.hpp"
-#include "../Systems/DoorSystem.hpp"
-#include "../Systems/CollectibleSystem.hpp"
-#include "../Systems/PasswordManagerSystem.hpp"
-#include "../Systems/ScientistSystem.hpp"
-#include "../Systems/ControlPanelSystem.hpp"
-#include "../Systems/LeverSystem.hpp"
-#include "../Systems/TimerSystem.hpp"
-#include "../Systems/BridgeCrashSystem.hpp"
-#include "../Systems/BatterySystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -139,36 +125,12 @@ void Game::Run() {
 void Game::SetUp() {
 	//Adding textures
 	//asssetManager.AddTexture(renderer, "asset-name", "asset.png");
-	assetManager.AddTexture(renderer, "metal-ground", "inFloor.png");
-	assetManager.AddTexture(renderer, "time-bot", "TimeBotSpriteSheet4-4-4.png");
-	assetManager.AddTexture(renderer, "metal-wall", "sujam6wall.png");
-	assetManager.AddTexture(renderer, "garden-ground", "outFloor.png");
-	assetManager.AddTexture(renderer, "garden-wall", "outWalls.png");
-	assetManager.AddTexture(renderer, "misc", "miscStuff3.png");
-	assetManager.AddTexture(renderer, "scientist-1", "deadsci1.png");
-	assetManager.AddTexture(renderer, "scientist-2", "deadsci2.png");
-	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
-	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
-	assetManager.AddTexture(renderer, "control-panel", "computer.png");
-	assetManager.AddTexture(renderer, "darkness", "smokedroom.png");
-	assetManager.AddTexture(renderer, "bridge", "KOPRU.png");
-	assetManager.AddTexture(renderer, "battery", "batarya.png");
-	assetManager.AddTexture(renderer, "fan", "BATTALFAN.png");
-	assetManager.AddTexture(renderer, "decor", "roominsides.png");
-	assetManager.AddTexture(renderer, "bomba", "rockboomin.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
-	assetManager.AddFont("pico-20", "pico8.ttf", 20);
-	assetManager.AddFont("pico-40", "pico8.ttf", 40);
-	assetManager.AddFont("pico-60", "pico8.ttf", 60);
 
 	//Adding sound effects
 	//assetManager.AddSFX("sfx-name","sfx.wav");
-	assetManager.AddSFX("click-sound", "click.wav");
-	assetManager.AddSFX("bridge-crash", "metal-crash.wav");
-	assetManager.AddSFX("password-sfx", "pickupCoin.wav");
-	assetManager.AddSFX("explosion", "explosion.wav");
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -183,34 +145,12 @@ void Game::SetUp() {
 	registry.AddSystem<UIDebugSystem>();
 	registry.AddSystem<LifetimeSystem>();
 	registry.AddSystem<SoundEffectSystem>();
-	registry.AddSystem<PlayerControlSystem>();
-	registry.AddSystem<ObstacleCollisionSystem>();
-	registry.AddSystem<PlayerAnimationSystem>();
-	registry.AddSystem<ParentSystem>();
-	registry.AddSystem<PlayerInteractionSystem>();
-	registry.AddSystem<DoorSystem>();
-	registry.AddSystem<CollectibleSystem>();
-	registry.AddSystem<PassworManagerSystem>();
-	registry.AddSystem<ScientistSystem>();
-	registry.AddSystem<ControlPanelSystem>();
-	registry.AddSystem<LeverSystem>();
-	registry.AddSystem<TimerSystem>();
-	registry.AddSystem<BridgeCrashSystem>();
-	registry.AddSystem<BatterySystem>();
 
-	sceneLoader.LoadScene(Scenes::Gameplay);
+	sceneLoader.LoadScene(Scenes::StartMenu);
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<SoundEffectSystem>().SubscribeToEvents(eventBus, &assetManager);
-	registry.GetSystem<ObstacleCollisionSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<DoorSystem>().SubscribeToEvents(eventBus, &inputManager);
-	registry.GetSystem<CollectibleSystem>().SubscribeToEvents(eventBus, &inputManager);
-	registry.GetSystem<ScientistSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
-	registry.GetSystem<ControlPanelSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
-	registry.GetSystem<LeverSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
-	registry.GetSystem<BridgeCrashSystem>().SubscribeToEvents(eventBus, &registry);
-	registry.GetSystem<BatterySystem>().SubscribeToEvents(eventBus, &sceneLoader);
 }
 
 void Game::ProcessInput() {
@@ -229,7 +169,7 @@ void Game::ProcessInput() {
 				isGameRunning = false;
 				// registry.ClearEntities();
 			}
-			// if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
+			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
 			inputManager.KeyPressed(sdlEvent.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:
@@ -247,7 +187,6 @@ void Game::ProcessInput() {
 	}
 	//System dependent on input get updated here
 	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
-	registry.GetSystem<PlayerControlSystem>().Update(inputManager);
 }
 
 void Game::Update() {
@@ -264,11 +203,6 @@ void Game::Update() {
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	// registry.GetSystem<LifetimeSystem>().Update(deltaTime);
-	registry.GetSystem<PlayerAnimationSystem>().Update();
-	registry.GetSystem<ParentSystem>().Update();
-	registry.GetSystem<PlayerInteractionSystem>().Update();
-	registry.GetSystem<PassworManagerSystem>().Update();
-	registry.GetSystem<TimerSystem>().Update(deltaTime, &sceneLoader, &eventBus);
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
@@ -276,9 +210,7 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	// SDL_Color background = {135, 206, 235, SDL_ALPHA_OPAQUE};
-	// SDL_Color background = {0, 0, 0, SDL_ALPHA_OPAQUE};
-	SDL_Color background = {62, 49, 43, SDL_ALPHA_OPAQUE};
+	SDL_Color background = {0, 0, 0, SDL_ALPHA_OPAQUE};
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 
