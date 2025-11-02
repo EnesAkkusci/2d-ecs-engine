@@ -5,6 +5,7 @@ A small 2D ECS engine I built to better understand low-level game programming an
 
 ## Demo
 Below is a little demo showing the current capabilities of the engine.  
+
 https://github.com/user-attachments/assets/2a22c46e-2ec8-4ee8-9cf9-5e58b140635b
 
 ## Features
