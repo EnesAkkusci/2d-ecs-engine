@@ -1,18 +1,8 @@
 # 2D ECS Engine
-A small 2D ECS engine I built to better understand low-level game programming and engine design. This was also a introductory exercise in "Modern C++" with things like variadic templates, smart pointers, perfect forwarding etc. 
-**Libraries:** SDL2, SDL2_mixer, SDL2_image, ImGui, GLM
-
+This is the first showcase game I made with the engine to show the basic capabilities of the engine.
 
 ## Demo
-Below is a little demo showing the current capabilities of the engine.  
-![flappy-bird-demo](./showcase/bird-demo.gif)
-
-## Features
-- AABB collision with sweep-and-prune broadphase
-- Synchronous event system
-- Animated sprites
-- Data-oriented ECS architecture
-- Keyboard and mouse input
+https://github.com/user-attachments/assets/c39d8ee8-d461-459e-b241-3d866d314ad0
 
 ## How to run
 
@@ -24,8 +14,4 @@ Below is a little demo showing the current capabilities of the engine.
   ``` make play ```
 
 - **Build with CMake**  
-  Clone the repo, go in to the ```/build``` directory and run ``` cmake .. ```
-
-#### Notes
-The engine is in a MVP state with small game(s) to showcase what it is currently capable of, I will most likely keep updating it.  
-Many thanks to Gustavo Pezzi from [pikuma.com](https://pikuma.com) for much of the inspration and information behind the making of this engine.
+  Clone the repo, make and go in to the ```/build``` directory and run ``` cmake .. ```
