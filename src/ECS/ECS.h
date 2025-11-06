@@ -2,11 +2,10 @@
 #include <deque>
 #include <memory>
 #include <bitset>
-#include <queue>
 #include <vector>
 #include <unordered_map>
-#include <string>
 #include <typeindex>
+#include <string>
 #include "../Utils.hpp"
 #include "../Logger/Logger.h"
 #include "../Utils.hpp"
@@ -18,6 +17,7 @@ using Signature = std::bitset<MAX_COMPONENTS>;
 ////////////////////////////////////////////
 class Entity {
 public:
+	Entity() : id(-1) {};
 	Entity(int _id) : id(_id) {};
 	void Kill();
 
@@ -243,6 +243,8 @@ bool Registry::HasComponent(Entity entity) const {
 
 template<typename TComponent>
 TComponent& Registry::GetComponent(Entity entity) {
+
+	#ifdef DEBUG
 	auto it = std::find(freeIDs.begin(), freeIDs.end(), entity.id);
 	if(it != freeIDs.end()) {
 		Logger::Err("Trying to get a free id's component:" + std::to_string(entity.id));
@@ -250,6 +252,7 @@ TComponent& Registry::GetComponent(Entity entity) {
 	Logger::Assert(entity.HasComponent<TComponent>(), 
 				"Entity with id: " + std::to_string(entity.id) 
 				+ " does not have component: " + typeid(TComponent).name());
+	#endif
 
 	const int componentID = Component<TComponent>::GetID();
 	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);

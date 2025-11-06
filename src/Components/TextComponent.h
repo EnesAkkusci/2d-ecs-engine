@@ -24,10 +24,10 @@ struct TextComponent {
 		TextAlignment _alignment = TopLeft,
 		bool _isFixed = true
 	) :
-	text(_text),
-	assetID(_assetID),
-	color(_color),
-	alignment(_alignment),
-	isFixed(_isFixed)
+		text(_text),
+		assetID(_assetID),
+		color(_color),
+		alignment(_alignment),
+		isFixed(_isFixed)
 	{}
 };

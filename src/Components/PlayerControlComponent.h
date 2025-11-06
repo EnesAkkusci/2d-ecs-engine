@@ -1,16 +1,28 @@
 #pragma once
 
-struct PlayerControlComponent {
-	PlayerControlComponent(int v = 0, int highGrav = 0, int lowGrav = 0)
-	: 
-		jumpSpeed(v),
-		highGrav(highGrav),
-		lowGrav(lowGrav),
-		isAlive(true)
-	{}
+enum PlayerState {
+	IDLE_SOUTH,
+	IDLE_EAST,
+	IDLE_NORTH,
+	IDLE_WEST,
 
-	int jumpSpeed;
-	int highGrav;
-	int lowGrav;
-	bool isAlive;
+	WALK_SOUTH,
+	WALK_EAST,
+	WALK_NORTH,
+	WALK_WEST,
+
+	NUM_PLAYER_STATE
+};
+
+struct PlayerControlComponent {
+	float playerMoveSpeed;
+	PlayerState state;
+
+	PlayerControlComponent(
+		float _moveSpeed = 0,
+		PlayerState _state = IDLE_SOUTH
+	) :
+		playerMoveSpeed(_moveSpeed),
+		state(_state)
+	{}
 };

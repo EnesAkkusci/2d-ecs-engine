@@ -3,7 +3,7 @@
 enum Scenes{
 	StartMenu,
 	Gameplay,
-	DeathScreen
+	DeathScreen,
 };
 
 class SceneLoader {

@@ -8,7 +8,7 @@ struct AnimationClip {
 	:
 	name(name),
 	sheetIndex(index),
-	animationFrameCount(frameCount), 
+	frameCount(frameCount),
 	isLooping(looping),
 	animationFrameRate(frameRate),
 	secondsPerAnimationFrame(1.0f/animationFrameRate),
@@ -18,7 +18,7 @@ struct AnimationClip {
 
 	std::string_view name;
 	int sheetIndex;
-	int animationFrameCount;
+	int frameCount;
 	bool isLooping;
 	int animationFrameRate;
 	double secondsPerAnimationFrame;

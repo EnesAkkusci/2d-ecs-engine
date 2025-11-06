@@ -13,6 +13,28 @@
 
 //NOTE: Change circle collider from taking in the radius to taking in the diameter to simplify this and the debug system
 
+struct AABB { double minX, maxX, minY, maxY; };
+
+static inline AABB BuildAABB(const Entity& e) {
+    const auto& tr = e.GetComponent<TransformComponent>();
+    const auto& c  = e.GetComponent<ColliderComponent>();
+
+    if (c.type == Collider::Box) {
+        const double x0 = tr.position.x + c.offset.x;
+        const double y0 = tr.position.y + c.offset.y;
+        return { x0, x0 + c.width_2r, y0, y0 + c.height };
+    } else { // Circle: width_2r = diameter
+        const double cx = tr.position.x + c.offset.x;
+        const double cy = tr.position.y + c.offset.y;
+        const double r  = c.width_2r * 0.5;
+        return { cx - r, cx + r, cy - r, cy + r };
+    }
+}
+
+static inline bool OverlapY(const AABB& a, const AABB& b) {
+    return !(a.maxY < b.minY || b.maxY < a.minY);
+}
+
 class CollisionSystem : public System {
 public:
 	CollisionSystem() {
@@ -27,63 +49,67 @@ public:
 	//https://leanrada.com/notes/sweep-and-prune
 	//https://leanrada.com/notes/sweep-and-prune-2
 	void Update(EventBus& eventBus) {
-		std::vector<Entity>& entities = GetSystemEntities();
-		for (auto entity : entities) entity.GetComponent<ColliderComponent>().inCollision = false;
+		auto& entities = GetSystemEntities();
+		for (auto e : entities) e.GetComponent<ColliderComponent>().inCollision = false;
 
-		std::sort(entities.begin(), entities.end(), [](Entity& a, Entity& b) {
-			const auto& aTrns = a.GetComponent<TransformComponent>();
-			const auto& aColl = a.GetComponent<ColliderComponent>();
-			const auto& bTrns = b.GetComponent<TransformComponent>();
-			const auto& bColl = b.GetComponent<ColliderComponent>();
+		// Build AABBs once
+		const size_t n = entities.size();
+		std::vector<AABB> aabbs; aabbs.reserve(n);
+		for (auto e : entities) aabbs.emplace_back(BuildAABB(e));
 
-			auto aLeft = aTrns.position.x + aColl.offset.x;
-			if (aColl.type == Circle) aLeft -= aColl.width_2r/2.0;
-			auto bLeft = bTrns.position.x + bColl.offset.x;
-			if (bColl.type == Circle) bLeft -= bColl.width_2r/2.0;
+		// Indices sorted by minX (sweep axis)
+		std::vector<size_t> idx(n);
+		for (size_t i = 0; i < n; ++i) idx[i] = i;
+		std::sort(idx.begin(), idx.end(), [&](size_t i, size_t j){ return aabbs[i].minX < aabbs[j].minX; });
 
-			return aLeft < bLeft;
-		});
-		
-		for (auto i = entities.begin(); i != entities.end(); i++) { 
-			Entity a = *i;
-			auto aTrns = a.GetComponent<TransformComponent>();
+		// Active set holds indices with maxX >= current.minX
+		std::vector<size_t> active; active.reserve(64);
+
+		// Narrowphase + events
+		for (size_t k = 0; k < n; ++k) {
+			const size_t i = idx[k];
+			const AABB& aAABB = aabbs[i];
+
+			// prune old from active (no longer overlap on X)
+			size_t write = 0;
+			for (size_t read = 0; read < active.size(); ++read) {
+				if (aabbs[active[read]].maxX >= aAABB.minX)
+					active[write++] = active[read];
+			}
+			active.resize(write);
+
+			// test against active set (X-overlap guaranteed), cull by Y
+			Entity a = entities[i];
 			auto& aColl = a.GetComponent<ColliderComponent>();
 
-			for (auto j = std::next(i); j != entities.end(); j++) {
-				Entity b = *j;
-				auto bTrns = b.GetComponent<TransformComponent>();
+			for (size_t aj = 0; aj < active.size(); ++aj) {
+				size_t j = active[aj];
+				const AABB& bAABB = aabbs[j];
+				if (!OverlapY(aAABB, bAABB)) continue; // 2nd axis prune
+
+				Entity b = entities[j];
 				auto& bColl = b.GetComponent<ColliderComponent>();
 
-				auto bLeft = bTrns.position.x + bColl.offset.x;
-				if (bColl.type == Circle) bLeft -= bColl.width_2r/2.0;
-				auto aRight = aTrns.position.x + aColl.offset.x;
-				if (aColl.type == Circle) aRight += aColl.width_2r/2.0;
-				else aRight += aColl.width_2r;
-
-				if (bLeft > aRight) break;
-
-				bool collisionHappened = CheckCollision(a,b);
-
-				if (collisionHappened) {
+				if (CheckCollision(a, b)) {
 					aColl.inCollision = true;
 					bColl.inCollision = true;
-					auto temp = MakeEntityPair(a, b);
-					if(!collidingPairs.contains(temp)) {
-						// Logger::Log("Collision enter between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
-						collidingPairs.insert(temp);
-						eventBus.EmitEvent<CollisionEnterEvent>(a,b);
+					auto p = MakeEntityPair(a, b);
+					if (!collidingPairs.contains(p)) {
+						collidingPairs.insert(p);
+						eventBus.EmitEvent<CollisionEnterEvent>(a, b);
 					}
-					// Logger::Log("Collision between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
 					eventBus.EmitEvent<CollisionEvent>(a, b);
 				}
 			}
+
+			// insert current into active
+			active.push_back(i);
 		}
-		//Initial collision checks complete
-		
-		for (auto it = collidingPairs.begin(); it != collidingPairs.end();){
-			if(CheckCollision(it->first, it->second)) {++it;}
+
+		// Collision exit sweep
+		for (auto it = collidingPairs.begin(); it != collidingPairs.end();) {
+			if (CheckCollision(it->first, it->second)) { ++it; }
 			else {
-				// Logger::Log("Collision exit between: " + std::to_string(it->first.id) + ", " + std::to_string(it->second.id));
 				eventBus.EmitEvent<CollisionExitEvent>(it->first, it->second);
 				it = collidingPairs.erase(it);
 			}
