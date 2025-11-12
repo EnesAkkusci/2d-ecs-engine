@@ -21,9 +21,9 @@ https://github.com/user-attachments/assets/2a22c46e-2ec8-4ee8-9cf9-5e58b140635b
 - **Prebuilt**  
   Download the latest Windows build from the **Releases** page and run `main.exe`.
 
-- **Build with Make**  
+- **Build with Batch**  
   Clone the repo and run:
-  ``` make play ```
+  ``` .\build.bat compile ``` and ```.\build.bat run ```
 
 - **Build with CMake**  
   Clone the repo, make and go in to the ```/build``` directory and run ``` cmake .. ```
