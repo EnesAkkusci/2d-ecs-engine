@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <string>
 #include <typeindex>
+#include <algorithm>
 #include "../Utils.hpp"
 #include "../Logger/Logger.h"
 #include "../Utils.hpp"

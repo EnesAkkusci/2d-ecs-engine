@@ -126,6 +126,8 @@ void Game::Run() {
 }
 
 void Game::SetUp() {
+	SDL_JoystickOpen(0);
+
 	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
 	assetManager.AddTexture(renderer, "blue-man-walk", "blue-man-walk-sheet.png");
 	assetManager.AddTexture(renderer, "bird", "blue-bird-sheet.png");
@@ -200,6 +202,37 @@ void Game::ProcessInput() {
 			break;
 		case SDL_MOUSEMOTION:
 			inputManager.SetMousePosition(sdlEvent.motion.x, sdlEvent.motion.y);
+			break;
+		case SDL_FINGERMOTION:
+			inputManager.SetMousePosition(windowWidth * sdlEvent.tfinger.x,
+				windowHeight * sdlEvent.tfinger.y);
+			break;
+		case SDL_FINGERDOWN:
+			inputManager.SetMousePosition(windowWidth * sdlEvent.tfinger.x,
+				windowHeight * sdlEvent.tfinger.y);
+			inputManager.MousePressed(SDL_BUTTON_LEFT);
+			break;
+		case SDL_FINGERUP:
+			inputManager.SetMousePosition(windowWidth * sdlEvent.tfinger.x,
+				windowHeight * sdlEvent.tfinger.y);
+			inputManager.MouseReleased(SDL_BUTTON_LEFT);
+			break;
+		case SDL_JOYBUTTONDOWN:
+			switch (sdlEvent.jbutton.button) {
+				case 0: inputManager.KeyPressed(KEY_SPACE); break; // Joycon A
+				case 9: inDebugMode = !inDebugMode; break; // Joycon ZR
+				case 10: isGameRunning = false; break; // Joycon +
+				default: break;
+			}
+			break;
+		case SDL_JOYBUTTONUP:
+			switch (sdlEvent.jbutton.button) {
+				case 0: inputManager.KeyReleased(KEY_SPACE); break; // Joycon A
+				default: break;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 	//System dependent on input get updated here
