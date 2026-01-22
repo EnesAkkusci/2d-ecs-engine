@@ -55,11 +55,13 @@ public:
 		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always, ImVec2(0, 0));
 		ImGui::SetNextWindowBgAlpha(0.9f);
 		if (ImGui::Begin("Map coordinates", NULL, windowFlags)) {
-			ImGui::Text(
-				"Mouse map coordinates (x=%.1f, y=%.1f)",
-				ImGui::GetIO().MousePos.x + camera.x,
-				ImGui::GetIO().MousePos.y + camera.y
-			);
+			#ifndef __SWITCH__
+				ImGui::Text(
+					"Mouse map coordinates (x=%.1f, y=%.1f)",
+					ImGui::GetIO().MousePos.x + camera.x,
+					ImGui::GetIO().MousePos.y + camera.y
+				);
+			#endif
 			ImGui::Text(
 				"FPS: %.1f", ImGui::GetIO().Framerate);
 		}
